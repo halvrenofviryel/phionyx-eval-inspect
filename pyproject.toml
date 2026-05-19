@@ -1,0 +1,71 @@
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "phionyx-eval-inspect"
+version = "0.1.0-dev"
+description = "Interoperability bridge — export Phionyx Reasoned Governance Envelope (RGE) evidence into Inspect AI evaluation logs."
+readme = "README.md"
+requires-python = ">=3.10"
+license = {text = "AGPL-3.0-or-later"}
+authors = [{name = "Ali Toygar Abak", email = "founder@phionyx.ai"}]
+keywords = [
+    "phionyx",
+    "inspect-ai",
+    "ai-evaluation",
+    "ai-governance",
+    "runtime-evidence",
+    "interoperability",
+]
+classifiers = [
+    "Development Status :: 3 - Alpha",
+    "Intended Audience :: Developers",
+    "License :: OSI Approved :: GNU Affero General Public License v3 or later (AGPLv3+)",
+    "Operating System :: OS Independent",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Topic :: Scientific/Engineering :: Artificial Intelligence",
+    "Topic :: Software Development :: Quality Assurance",
+]
+# Inspect AI itself is an OPTIONAL dependency — the adapter writes
+# Inspect-compatible JSON without needing the package at runtime. Pulling
+# inspect-ai in only matters when you want to view the logs via
+# `inspect view` or wire the MCP server into a live eval task.
+dependencies = []
+
+[project.optional-dependencies]
+test = [
+    "pytest>=8.0",
+]
+dev = [
+    "pytest>=8.0",
+    "ruff>=0.6",
+    "mypy>=1.10",
+]
+inspect = [
+    "inspect-ai>=0.3.0",
+]
+
+[project.scripts]
+phionyx-eval-inspect = "phionyx_eval_inspect.cli:main"
+
+[project.urls]
+Homepage = "https://phionyx.ai"
+Repository = "https://github.com/halvrenofviryel/phionyx-eval-inspect"
+"Companion package (outward MCP)" = "https://github.com/halvrenofviryel/phionyx-mcp-server"
+"Companion package (inward gate)" = "https://github.com/halvrenofviryel/phionyx-pipeline-mcp"
+"Bug Tracker" = "https://github.com/halvrenofviryel/phionyx-eval-inspect/issues"
+"Project Hub" = "https://github.com/halvrenofviryel/phionyx-research"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+
+[tool.ruff]
+line-length = 100
+target-version = "py310"
