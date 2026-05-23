@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "phionyx-eval-inspect"
-version = "0.1.0-dev"
+version = "0.1.0"
 description = "Interoperability bridge — export Phionyx Reasoned Governance Envelope (RGE) evidence into Inspect AI evaluation logs."
 readme = "README.md"
 requires-python = ">=3.10"
