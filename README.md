@@ -81,6 +81,10 @@ Each envelope becomes one Inspect *sample*. The sample carries:
 
 Phionyx-specific fields live under `metadata.phionyx` so native Inspect tooling sees them without colliding with Inspect's native data model.
 
+## Where this fits on phionyx.ai
+
+This package surfaces under [**phionyx.ai/evidence**](https://phionyx.ai/evidence) — the Reviewer Evidence pillar. It is the bridge that turns a Phionyx envelope chain into a format the wider eval ecosystem (Inspect AI) reads natively, so Phionyx-governed runs are inspectable in the tools reviewers already use.
+
 ## Companion packages — the wider stack
 
 | Package | Role |
@@ -89,8 +93,10 @@ Phionyx-specific fields live under `metadata.phionyx` so native Inspect tooling 
 | [phionyx-mcp-server](https://github.com/halvrenofviryel/phionyx-mcp-server) | MCP trust boundary: descriptor hash, signed RGE envelope, audit chain (outward layer) |
 | [phionyx-pipeline-mcp](https://github.com/halvrenofviryel/phionyx-pipeline-mcp) | Self-governance MCP for Claude Code: three-layer verification over the agent's own "fixed / tested / changed" claims (inward layer) |
 | [**phionyx-eval-inspect**](https://github.com/halvrenofviryel/phionyx-eval-inspect) | **(this)** Interoperability bridge into Inspect AI eval logs |
+| [phionyx-langchain-langgraph](https://github.com/halvrenofviryel/phionyx_langchain_langgraph) | LangChain + LangGraph adapters (v0.5.0+, alpha) — every chain / tool / LLM event + supervisor handoff → signed envelopes |
+| [phionyx-openai-agents](https://github.com/halvrenofviryel/phionyx_openai_agents) | OpenAI Agents SDK tracing bridge (v0.5.0+, alpha) — every Trace and Span → signed envelopes |
 
-When all three MCP-related packages are installed, a single Claude Code session: emits Phionyx envelopes (outward + inward) → shares one `trace_id` across both MCPs → this adapter converts the chain into an Inspect `.eval` log → `inspect view` shows the full run.
+When the two MCP packages are installed, a single Claude Code session emits Phionyx envelopes (outward + inward) → both packages share one `trace_id` → this adapter converts the chain into an Inspect `.eval` log → `inspect view` shows the full run. The framework adapters (langchain-langgraph + openai-agents) emit envelopes from non-MCP workflows; the same Inspect conversion path applies once those chains land on disk.
 
 ## Schema pinning
 
@@ -124,6 +130,8 @@ AGPL-3.0-or-later. See [`LICENSE`](LICENSE).
 
 ## See also
 
+- [phionyx.ai/evidence](https://phionyx.ai/evidence) — entry pillar this package surfaces under (the Evidence Matrix)
+- [phionyx.ai/bounded-authority](https://phionyx.ai/bounded-authority) — entry pillar for the runtime + MCP siblings that produce the envelopes this adapter consumes
 - Project hub: [github.com/halvrenofviryel/phionyx-research](https://github.com/halvrenofviryel/phionyx-research)
 - Phionyx Core SDK: [pypi.org/project/phionyx-core](https://pypi.org/project/phionyx-core/)
 - Inspect AI: [github.com/UKGovernmentBEIS/inspect_ai](https://github.com/UKGovernmentBEIS/inspect_ai)
