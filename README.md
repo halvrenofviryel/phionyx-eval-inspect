@@ -2,7 +2,9 @@
 
 > Interoperability bridge — export Phionyx Reasoned Governance Envelope (RGE) evidence into Inspect AI evaluation logs.
 
-[Inspect AI](https://github.com/UKGovernmentBEIS/inspect_ai) is the open-source frontier-model evaluation framework maintained by UK AISI and used (per `inspect.aisi.org.uk` as of 2026-05-19) as the standard frontier-eval framework across multiple government AI safety institutes — UK AISI, US CAISI, EU AI Office, Japan AISI, Korea AISI.
+**Where this sits in the stack:** `phionyx-eval-inspect` (v0.1.0) is an **adapter**, not the engine, the gate, or the Standard. It is a read-only bridge that converts the signed evidence chain produced by the Phionyx runtime into Inspect AI's native log format. The three core components it sits alongside are the SDK/engine [`phionyx-core`](https://pypi.org/project/phionyx-core/) (v0.7.2), the self-governance gate [`phionyx-pipeline-mcp`](https://github.com/halvrenofviryel/phionyx-pipeline-mcp) (stable v0.2.0 / alpha v0.3.0a1), and the vendor-neutral [`phionyx-evaluation-standard`](https://github.com/halvrenofviryel/phionyx-evaluation-standard). See [Companion packages](#companion-packages--the-wider-stack) and [Evaluation Standard](#evaluation-standard) below.
+
+[Inspect AI](https://github.com/UKGovernmentBEIS/inspect_ai) is the open-source frontier-model evaluation framework maintained by UK AISI. Several government AI safety institutes have publicly described using it as a frontier-eval framework; verify the current adoption picture at [`inspect.aisi.org.uk`](https://inspect.aisi.org.uk) before citing specifics.
 
 This package is **not an endorsement by or partnership with** any of those organisations. It is a **read-only interoperability adapter** that lets Phionyx-governed runs become natively inspectable in Inspect AI's tooling.
 
@@ -87,20 +89,26 @@ This package surfaces under [**phionyx.ai/evidence**](https://phionyx.ai/evidenc
 
 ## Companion packages — the wider stack
 
-| Package | Role |
-|---|---|
-| [phionyx-core](https://pypi.org/project/phionyx-core/) | Deterministic AI runtime governance — 46-block pipeline, kill switch, ethics + safety gates, signed audit envelopes |
-| [phionyx-mcp-server](https://github.com/halvrenofviryel/phionyx-mcp-server) | MCP trust boundary: descriptor hash, signed RGE envelope, audit chain (outward layer) |
-| [phionyx-pipeline-mcp](https://github.com/halvrenofviryel/phionyx-pipeline-mcp) | Self-governance MCP for Claude Code: three-layer verification over the agent's own "fixed / tested / changed" claims (inward layer) |
-| [**phionyx-eval-inspect**](https://github.com/halvrenofviryel/phionyx-eval-inspect) | **(this)** Interoperability bridge into Inspect AI eval logs |
-| [phionyx-langchain-langgraph](https://github.com/halvrenofviryel/phionyx-langchain-langgraph) | LangChain + LangGraph adapters (v0.5.0+, alpha) — every chain / tool / LLM event + supervisor handoff → signed envelopes |
-| [phionyx-openai-agents](https://github.com/halvrenofviryel/phionyx-openai-agents) | OpenAI Agents SDK tracing bridge (v0.5.0+, alpha) — every Trace and Span → signed envelopes |
+Each component below has its own independent version line — do not cross-attribute one component's version to another.
+
+| Package | Role | Version |
+|---|---|---|
+| [phionyx-core](https://pypi.org/project/phionyx-core/) | **Engine (SDK).** Deterministic AI runtime governance — 46-block pipeline, kill switch, ethics + safety gates, signed audit envelopes. Reference implementation scoring L3 + D3 on the Evaluation Standard. | v0.7.2 |
+| [phionyx-mcp-server](https://github.com/halvrenofviryel/phionyx-mcp-server) | MCP trust boundary: descriptor hash, signed RGE envelope, audit chain (outward layer) | v0.1.0 |
+| [phionyx-pipeline-mcp](https://github.com/halvrenofviryel/phionyx-pipeline-mcp) | **Gate.** Self-governance MCP for Claude Code: verifies the agent's own "fixed / tested / changed" claims against git-diff truth (inward layer). This is the component the Evaluation Standard's claim-governance ladder (CG-L0…CG-L5) rates: stable = CG-L2, alpha = CG-L3 (opt-in / default-off). | stable v0.2.0 / alpha v0.3.0a1 |
+| [**phionyx-eval-inspect**](https://github.com/halvrenofviryel/phionyx-eval-inspect) | **(this)** Interoperability bridge into Inspect AI eval logs | v0.1.0 |
+| [phionyx-langchain-langgraph](https://github.com/halvrenofviryel/phionyx-langchain-langgraph) | LangChain + LangGraph adapters — every chain / tool / LLM event + supervisor handoff → signed envelopes | v0.1.0a1 (alpha) |
+| [phionyx-openai-agents](https://github.com/halvrenofviryel/phionyx-openai-agents) | OpenAI Agents SDK tracing bridge — every Trace and Span → signed envelopes | v0.1.0a1 (alpha) |
 
 When the two MCP packages are installed, a single Claude Code session emits Phionyx envelopes (outward + inward) → both packages share one `trace_id` → this adapter converts the chain into an Inspect `.eval` log → `inspect view` shows the full run. The framework adapters (langchain-langgraph + openai-agents) emit envelopes from non-MCP workflows; the same Inspect conversion path applies once those chains land on disk.
 
+## Evaluation Standard
+
+The vendor-neutral [`phionyx-evaluation-standard`](https://github.com/halvrenofviryel/phionyx-evaluation-standard) (released v0.1.1 / v0.2.0; v0.3 in draft) defines the scales that place every component on common ground: **L0-L3** (evaluation maturity) and **D0-D3** (determinism), both released, and **CG-L0…CG-L5** (claim-governance), which is the v0.3 layer and currently a draft. The CG ladder rates the gate (`phionyx-pipeline-mcp`); L0-L3 / D0-D3 rate any runtime, with `phionyx-core` as the reference implementation (L3 + D3). This adapter is the bridge that makes that evidence inspectable — it does not itself carry a CG/L/D grade.
+
 ## Schema pinning
 
-The adapter is pinned to Inspect AI log format **v0.3.x** (as of 2026-05-19). Override with:
+The adapter is pinned to the Inspect AI log format **v0.3.x** line. Confirm the current Inspect log-format version at [`inspect.aisi.org.uk`](https://inspect.aisi.org.uk) if you need an exact pin. Override the pin with:
 
 ```bash
 PHIONYX_INSPECT_LOG_SCHEMA_VERSION=v0.3.x phionyx-eval-inspect convert ...
@@ -110,7 +118,7 @@ To support a new Inspect schema, drop `log_schema_v0_<minor>.py` next to `adapte
 
 ## Framing — what this package does NOT claim
 
-- It is **not** an endorsement, accreditation, or partnership with UK AISI, US CAISI, EU AI Office, Japan AISI, or Korea AISI.
+- It is **not** an endorsement, accreditation, or partnership with UK AISI or any other AI safety institute or government body.
 - It does **not** validate or score the Phionyx-governed run — it surfaces evidence so Inspect's own scorers can be applied.
 - It does **not** require Inspect AI to be installed at runtime — only at view time.
 - It does **not** modify Inspect AI; the adapter writes a standard `.eval` file the framework's native tools read.
@@ -133,6 +141,7 @@ AGPL-3.0-or-later. See [`LICENSE`](LICENSE).
 - [phionyx.ai/evidence](https://phionyx.ai/evidence) — entry pillar this package surfaces under (the Evidence Matrix)
 - [phionyx.ai/bounded-authority](https://phionyx.ai/bounded-authority) — entry pillar for the runtime + MCP siblings that produce the envelopes this adapter consumes
 - Project hub: [github.com/halvrenofviryel/phionyx-research](https://github.com/halvrenofviryel/phionyx-research)
+- Evaluation Standard: [github.com/halvrenofviryel/phionyx-evaluation-standard](https://github.com/halvrenofviryel/phionyx-evaluation-standard) — the L0-L3 / D0-D3 / CG-L0…CG-L5 scales this component is placed on
 - Phionyx Core SDK: [pypi.org/project/phionyx-core](https://pypi.org/project/phionyx-core/)
 - Inspect AI: [github.com/UKGovernmentBEIS/inspect_ai](https://github.com/UKGovernmentBEIS/inspect_ai)
 - Inspect AI documentation: [inspect.aisi.org.uk](https://inspect.aisi.org.uk)
