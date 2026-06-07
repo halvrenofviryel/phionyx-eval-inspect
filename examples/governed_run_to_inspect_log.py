@@ -24,7 +24,7 @@ def _envelope(turn: int) -> dict:
         "schema": "phionyx.governed_response_envelope.v0_2",
         "subject": {
             "runtime": "phionyx-core",
-            "version": "0.4.0",
+            "version": "0.8.1",
             "producer": "claude-opus-4-7",
             "turn_index": turn,
             "timestamp_utc": datetime.now(timezone.utc).isoformat(),
