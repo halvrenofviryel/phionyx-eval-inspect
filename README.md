@@ -106,7 +106,7 @@ When the two MCP packages are installed, a single Claude Code session emits Phio
 
 The signed records this adapter reads follow the **[AI Runtime Evidence Protocol (AIREP)](https://github.com/halvrenofviryel/ai-runtime-evidence-protocol)** (v0.1, experimental) — a vendor-, model-, and app-neutral open format for an **AI decision receipt**: one signed, hash-chained, offline-checkable record per runtime decision that anyone can read and tied to no vendor. Each record carries eight groups — `subject`, `input`, `claim`, `output`, `evidence`, `directive`, `scope`, `integrity` (plus optional profiles) — canonicalised with RFC 8785 JSON and checkable by two independent verifiers (Python + Node), with conformance classes Core / Verified / Trusted.
 
-AIREP is a **proposed** open format, not a ratified standard, with no conformant producer yet: the Phionyx **Reasoned Governance Envelope (RGE)** is developed alongside it, and reference producer — the first system that emits RGE envelopes, and it matures by conforming. RGE is a Phionyx profile of AIREP. This adapter is the bridge that makes those records inspectable in Inspect AI; it does not produce or grade them itself.
+AIREP is a **proposed** open format, not a ratified standard, with no conformant producer yet: the Phionyx **Reasoned Governance Envelope (RGE)** is developed alongside it and matures by conforming toward it. A conformant projection between RGE and AIREP is **not implemented** (measured 2026-08-06: AIREP's own reference verifier rejects an RGE envelope handed to it directly). This adapter is the bridge that makes those records inspectable in Inspect AI; it does not produce or grade them itself.
 
 ## Schema pinning
 
